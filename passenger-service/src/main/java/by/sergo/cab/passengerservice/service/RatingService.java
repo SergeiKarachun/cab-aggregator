@@ -1,8 +1,8 @@
 package by.sergo.cab.passengerservice.service;
 
-import by.sergo.cab.passengerservice.domain.dto.PassengerRatingResponseDto;
-import by.sergo.cab.passengerservice.domain.dto.RatingCreateRequestDto;
-import by.sergo.cab.passengerservice.domain.dto.RatingResponseDto;
+import by.sergo.cab.passengerservice.domain.dto.response.PassengerRatingResponseDto;
+import by.sergo.cab.passengerservice.domain.dto.request.RatingCreateRequestDto;
+import by.sergo.cab.passengerservice.domain.dto.response.RatingResponseDto;
 import by.sergo.cab.passengerservice.domain.entity.Rating;
 import by.sergo.cab.passengerservice.repository.PassengerRepository;
 import by.sergo.cab.passengerservice.repository.RatingRepository;

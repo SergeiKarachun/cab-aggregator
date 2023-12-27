@@ -1,4 +1,4 @@
-package by.sergo.cab.passengerservice.domain.dto;
+package by.sergo.cab.passengerservice.domain.dto.request;
 
 import lombok.Value;
 

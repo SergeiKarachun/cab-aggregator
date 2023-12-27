@@ -1,4 +1,4 @@
-package by.sergo.cab.passengerservice.domain.dto;
+package by.sergo.cab.passengerservice.domain.dto.response;
 
 
 import lombok.Builder;

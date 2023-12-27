@@ -1,8 +1,8 @@
 package by.sergo.cab.passengerservice.service;
 
-import by.sergo.cab.passengerservice.domain.dto.PassengerCreateUpdateRequestDto;
-import by.sergo.cab.passengerservice.domain.dto.PassengerListResponseDto;
-import by.sergo.cab.passengerservice.domain.dto.PassengerResponseDto;
+import by.sergo.cab.passengerservice.domain.dto.request.PassengerCreateUpdateRequestDto;
+import by.sergo.cab.passengerservice.domain.dto.response.PassengerListResponseDto;
+import by.sergo.cab.passengerservice.domain.dto.response.PassengerResponseDto;
 import by.sergo.cab.passengerservice.domain.entity.Passenger;
 import by.sergo.cab.passengerservice.repository.PassengerRepository;
 import by.sergo.cab.passengerservice.service.exception.BadRequestException;
@@ -10,7 +10,6 @@ import by.sergo.cab.passengerservice.service.exception.ExceptionMessageUtil;
 import by.sergo.cab.passengerservice.service.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -82,7 +80,8 @@ public class PassengerService {
     }
 
     public PassengerListResponseDto getAll(Integer page, Integer size, String field) {
-        var responsePage = passengerRepository.findAll(PageRequest.of(page, size).withSort(Sort.by(field)))
+        PageRequest pageRequest = getPageRequest(page, size, field);
+        var responsePage = passengerRepository.findAll(pageRequest)
                 .map(this::mapToDto);
         return PassengerListResponseDto.builder()
                 .passengers(responsePage.getContent())
@@ -93,15 +92,13 @@ public class PassengerService {
                 .build();
     }
 
-    public PassengerListResponseDto getAll(Integer page, Integer size) {
-        var responsePage = passengerRepository.findAll(PageRequest.of(page, size))
-                .map(this::mapToDto);
-        return PassengerListResponseDto.builder()
-                .passengers(responsePage.getContent())
-                .page(responsePage.getPageable().getPageNumber())
-                .size(responsePage.getContent().size())
-                .total((int) responsePage.getTotalElements())
-                .build();
+    private PageRequest getPageRequest(Integer page, Integer size, String field) {
+
+        if (page >= 1 && size >= 1 && field != null)
+            return PageRequest.of(page - 1, size).withSort(Sort.by(field));
+        if (page >= 1 && size >= 1 && field == null)
+            return PageRequest.of(page - 1, size);
+        else return PageRequest.of(0, 10);
     }
 
     private void checkIsPassengerForUpdateUnique(PassengerCreateUpdateRequestDto dto, Passenger entity) {
@@ -139,7 +136,6 @@ public class PassengerService {
                     ExceptionMessageUtil.getAlreadyExistMessage("Passenger", "email", dto.getEmail()));
         }
     }
-
 
     private Passenger mapToEntity(PassengerCreateUpdateRequestDto passengerResponseDto) {
         return modelMapper.map(passengerRepository, Passenger.class);
