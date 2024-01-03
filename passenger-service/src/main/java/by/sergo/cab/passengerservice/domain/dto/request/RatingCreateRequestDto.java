@@ -3,9 +3,14 @@ package by.sergo.cab.passengerservice.domain.dto.request;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Value;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 
-@Value
+@Getter
+@Setter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class RatingCreateRequestDto {
     @NotBlank(message = "Garde is required")
     @Min(value = 1, message = "Min value is 1")

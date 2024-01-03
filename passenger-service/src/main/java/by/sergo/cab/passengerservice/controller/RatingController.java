@@ -4,6 +4,7 @@ import by.sergo.cab.passengerservice.domain.dto.response.PassengerRatingResponse
 import by.sergo.cab.passengerservice.domain.dto.request.RatingCreateRequestDto;
 import by.sergo.cab.passengerservice.domain.dto.response.RatingResponseDto;
 import by.sergo.cab.passengerservice.service.RatingService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,7 +21,7 @@ public class RatingController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<RatingResponseDto> createRateOfPassenger(@RequestBody RatingCreateRequestDto dto,
+    public ResponseEntity<RatingResponseDto> createRateOfPassenger(@RequestBody @Valid RatingCreateRequestDto dto,
                                                                    @PathVariable("id") Long passengerId) {
         RatingResponseDto responseDto = ratingService.createRateOfPassenger(dto, passengerId);
         return ResponseEntity.ok(responseDto);

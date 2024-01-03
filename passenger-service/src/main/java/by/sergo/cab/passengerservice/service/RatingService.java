@@ -29,7 +29,9 @@ public class RatingService {
         ));
         var newRating = mapToEntity(dto);
         newRating.setPassenger(passenger);
-        return mapToDto(ratingRepository.save(newRating));
+        var save = ratingRepository.save(newRating);
+        var ratingResponseDto = mapToDto(save);
+        return ratingResponseDto;
     }
 
     public PassengerRatingResponseDto getPassengerRating(Long passengerId) {

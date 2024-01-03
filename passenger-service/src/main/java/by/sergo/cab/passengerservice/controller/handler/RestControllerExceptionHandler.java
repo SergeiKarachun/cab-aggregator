@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.rmi.ServerException;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice(basePackages = {"by.sergo.cab.passengerservice.controller"})
@@ -29,7 +30,13 @@ public class RestControllerExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<RestErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        return createResponse(ex, HttpStatus.BAD_REQUEST);
+        var collect = ex.getBindingResult().getAllErrors().stream()
+                .map(er -> er.getDefaultMessage()).collect(Collectors.toList());
+        return new ResponseEntity<>(RestErrorResponse.builder()
+                .messages(collect)
+                .status(HttpStatus.BAD_REQUEST)
+                .time(LocalDateTime.now())
+                .build(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ServerException.class)
