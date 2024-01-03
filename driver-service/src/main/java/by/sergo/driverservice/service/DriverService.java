@@ -68,7 +68,7 @@ public class DriverService {
         return mapToDto(driver);
     }
 
-    public DriverListResponseDto getAll(Integer page, Integer size, String orderBy) {
+    public DriverListResponseDto getAvailableDrivers(Integer page, Integer size, String orderBy) {
         PageRequest pageRequest = getPageRequest(page, size, orderBy);
         var responsePage = driverRepository.getAllByStatus(Status.AVAILABLE, pageRequest)
                 .map(this::mapToDto);
@@ -82,7 +82,7 @@ public class DriverService {
                 .build();
     }
 
-    public DriverListResponseDto getAvailableDrivers(Integer page, Integer size, String orderBy) {
+    public DriverListResponseDto getAll(Integer page, Integer size, String orderBy) {
         PageRequest pageRequest = getPageRequest(page, size, orderBy);
         var responsePage = driverRepository.findAll(pageRequest)
                 .map(this::mapToDto);

@@ -5,6 +5,7 @@ import by.sergo.driverservice.domain.dto.response.DriverListResponseDto;
 import by.sergo.driverservice.domain.dto.response.DriverResponseDto;
 import by.sergo.driverservice.domain.dto.response.StringResponse;
 import by.sergo.driverservice.service.DriverService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,13 +20,13 @@ public class DriverController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<DriverResponseDto> create(@RequestBody DriverCreateUpdateRequestDto dto) {
+    public ResponseEntity<DriverResponseDto> create(@RequestBody @Valid DriverCreateUpdateRequestDto dto) {
         var driverResponseDto = driverService.create(dto);
         return ResponseEntity.ok(driverResponseDto);
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DriverResponseDto> update(@RequestBody DriverCreateUpdateRequestDto dto,
+    public ResponseEntity<DriverResponseDto> update(@RequestBody @Valid DriverCreateUpdateRequestDto dto,
                                                     @PathVariable("id") Long id) {
         return ResponseEntity.ok(driverService.update(id,dto));
     }

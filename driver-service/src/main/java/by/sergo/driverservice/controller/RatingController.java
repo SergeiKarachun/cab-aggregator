@@ -5,6 +5,7 @@ import by.sergo.driverservice.domain.dto.request.RatingCreateRequestDto;
 import by.sergo.driverservice.domain.dto.response.DriverRatingResponseDto;
 import by.sergo.driverservice.domain.dto.response.RatingResponseDto;
 import by.sergo.driverservice.service.RatingService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,7 +21,7 @@ public class RatingController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<RatingResponseDto> createRatingOfDriver(@RequestBody RatingCreateRequestDto dto,
+    public ResponseEntity<RatingResponseDto> createRatingOfDriver(@RequestBody @Valid RatingCreateRequestDto dto,
                                                                   @PathVariable("id") Long driverId) {
         return ResponseEntity.ok(ratingService.createRateOfDriver(dto, driverId));
     }
