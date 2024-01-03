@@ -11,7 +11,6 @@ import by.sergo.driverservice.service.exception.ExceptionMessageUtil;
 import by.sergo.driverservice.service.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -34,6 +33,7 @@ public class DriverService {
 
     @Transactional
     public DriverResponseDto create(DriverCreateUpdateRequestDto dto) {
+        checkIsDriverUnique(dto);
         return Optional.of(mapToEntity(dto))
                 .map(driverRepository::saveAndFlush)
                 .map(this::mapToDto)
