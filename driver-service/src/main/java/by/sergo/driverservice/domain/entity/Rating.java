@@ -22,7 +22,7 @@ public class Rating {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "driver_id", nullable = false)
-    private Driver passenger;
+    private Driver driver;
 
     private Long passengerId;
 
