@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -38,6 +39,7 @@ public class CarService {
         checkCarIsUnique(dto);
         checkDriverIsExist(dto.getDriverId());
         checkDriverHasCar(dto.getDriverId());
+        checkDate(dto.getYearOfManufacture());
         return Optional.of(mapToEntity(dto))
                 .map(carRepository::saveAndFlush)
                 .map(this::mapToDto)
@@ -127,6 +129,13 @@ public class CarService {
 
         checkDriverIsExist(dto.getDriverId());
         checkDriverHasCar(dto.getDriverId());
+        checkDate(dto.getYearOfManufacture());
+    }
+
+    private void checkDate(Integer yearOfManufacture) {
+        if (yearOfManufacture > LocalDate.now().getYear()) {
+            throw new BadRequestException(HttpStatus.BAD_REQUEST, "The year of manufacture should be no more than now.");
+        }
     }
 
     private void checkDriverIsExist(Long driverId) {
