@@ -46,7 +46,7 @@ public class RatingService {
                 .orElse(5.0);
         return PassengerRatingResponseDto.builder()
                 .passengerId(passengerId)
-                .rating(passengerRating)
+                .rating(Math.floor(passengerRating*100)/100)
                 .build();
     }
 
