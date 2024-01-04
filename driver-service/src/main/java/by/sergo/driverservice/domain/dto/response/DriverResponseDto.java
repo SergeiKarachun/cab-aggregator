@@ -5,7 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-
 public class DriverResponseDto {
     private Long id;
     private String name;

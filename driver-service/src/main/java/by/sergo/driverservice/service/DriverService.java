@@ -47,7 +47,7 @@ public class DriverService {
         checkIsDriverForUpdateUnique(dto, existDriver);
 
         var driverToSave = mapToEntity(dto);
-        driverToSave.setId(driverToSave.getId());
+        driverToSave.setId(id);
 
         return Optional.of(driverToSave)
                 .map(driverRepository::saveAndFlush)
@@ -116,7 +116,7 @@ public class DriverService {
     }
 
     private PageRequest getPageRequest(Integer page, Integer size, String orderBy) {
-        if (page < 0 || size < 0) {
+        if (page < 1 || size < 1) {
             throw new BadRequestException(
                     ExceptionMessageUtil.getInvaLidRequestMessage(page, size));
         }

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,8 +15,10 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DriverCreateUpdateRequestDto {
     @NotBlank(message = "Name is required")
+    @Size(min = 2, message = "Name should have at least 2 characters")
     String name;
     @NotBlank(message = "Surname is required")
+    @Size(min = 2, message = "Surname should have at least 2 characters")
     String surname;
     @NotBlank(message = "Email is required")
     @Schema(example = "example@gmail.com")
