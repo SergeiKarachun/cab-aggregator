@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -114,12 +115,17 @@ public class PassengerService {
     }
 
     private void checkIsPassengerForUpdateUnique(PassengerCreateUpdateRequestDto dto, Passenger entity) {
+        var errors = new HashMap<String, String>();
         if (!Objects.equals(dto.getEmail(), entity.getEmail())) {
-            checkEmailIsUnique(dto);
+            checkEmailIsUnique(dto, errors);
         }
 
         if (!Objects.equals(dto.getPhone(), entity.getPhone())) {
-            checkPhoneIsUnique(dto);
+            checkPhoneIsUnique(dto, errors);
+        }
+
+        if (!errors.isEmpty()) {
+            throw new BadRequestException(ExceptionMessageUtil.getAlreadyExistMapMessage(errors));
         }
     }
 
@@ -131,21 +137,25 @@ public class PassengerService {
     }
 
     private void checkIsPassengerUnique(PassengerCreateUpdateRequestDto dto) {
-        checkEmailIsUnique(dto);
-        checkPhoneIsUnique(dto);
-    }
+        var errors = new HashMap<String, String>();
 
-    private void checkPhoneIsUnique(PassengerCreateUpdateRequestDto dto) {
-        if (passengerRepository.existsByPhone(dto.getPhone())) {
-            throw new BadRequestException(
-                    ExceptionMessageUtil.getAlreadyExistMessage("Passenger", "phone", dto.getPhone()));
+        checkEmailIsUnique(dto, errors);
+        checkPhoneIsUnique(dto, errors);
+
+        if (!errors.isEmpty()) {
+            throw new BadRequestException(ExceptionMessageUtil.getAlreadyExistMapMessage(errors));
         }
     }
 
-    private void checkEmailIsUnique(PassengerCreateUpdateRequestDto dto) {
+    private void checkPhoneIsUnique(PassengerCreateUpdateRequestDto dto, HashMap<String, String> errors) {
+        if (passengerRepository.existsByPhone(dto.getPhone())) {
+            errors.put("phone", ExceptionMessageUtil.getAlreadyExistMessage("Passenger", "phone", dto.getPhone()));
+        }
+    }
+
+    private void checkEmailIsUnique(PassengerCreateUpdateRequestDto dto, HashMap<String, String> errors) {
         if (passengerRepository.existsByEmail(dto.getEmail())) {
-            throw new BadRequestException(
-                    ExceptionMessageUtil.getAlreadyExistMessage("Passenger", "email", dto.getEmail()));
+            errors.put("email", ExceptionMessageUtil.getAlreadyExistMessage("Passenger", "email", dto.getEmail()));
         }
     }
 
