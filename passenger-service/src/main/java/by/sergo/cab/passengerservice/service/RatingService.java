@@ -29,8 +29,10 @@ public class RatingService {
         ));
         var newRating = mapToEntity(dto);
         newRating.setPassenger(passenger);
-        var save = ratingRepository.save(newRating);
+        var save = ratingRepository.saveAndFlush(newRating);
         var ratingResponseDto = mapToDto(save);
+        passenger.setRating(getAverageRating(passengerId));
+        passengerRepository.save(passenger);
         return ratingResponseDto;
     }
 
@@ -39,15 +41,20 @@ public class RatingService {
                 ExceptionMessageUtil.getNotFoundMessage("Passenger", "passengerId", passengerId)
         ));
 
+        double passengerRating = getAverageRating(passengerId);
+        return PassengerRatingResponseDto.builder()
+                .passengerId(passengerId)
+                .rating(Math.floor(passengerRating*100)/100)
+                .build();
+    }
+
+    private double getAverageRating(Long passengerId) {
         var passengerRating = ratingRepository.getRatingsByPassengerId(passengerId)
                 .stream()
                 .mapToDouble(Rating::getGrade)
                 .average()
                 .orElse(5.0);
-        return PassengerRatingResponseDto.builder()
-                .passengerId(passengerId)
-                .rating(Math.floor(passengerRating*100)/100)
-                .build();
+        return passengerRating;
     }
 
     public RatingResponseDto mapToDto(Rating rating){
