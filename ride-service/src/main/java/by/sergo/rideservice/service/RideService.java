@@ -43,20 +43,25 @@ public class RideService {
         return modelMapper.map(getByIdOrElseThrow(id), RideResponseDto.class);
     }
 
+    @Transactional
     public RideResponseDto changeStatus(String rideId, Status status) {
         var ride = getByIdOrElseThrow(rideId);
 
-        if (ride.getStatus().equals(TRANSPORT) && status.equals(FINISHED)){
+        if (!Arrays.asList(values()).contains(status)) {
+            throw new BadRequestException(
+                    ExceptionMessageUtil.getInvalidStatusMessage(status.toString()));
+        }
+
+        if (ride.getStatus().equals(TRANSPORT) && status.equals(FINISHED)) {
             ride.setStatus(status);
             ride.setEndTime(LocalDateTime.now());
         }
-
-        if (ride.getStatus().equals(ACCEPTED) && status.equals(TRANSPORT)){
+        if (ride.getStatus().equals(ACCEPTED) && status.equals(TRANSPORT)) {
             ride.setStatus(status);
             ride.setStartTime(LocalDateTime.now());
         }
 
-        if (ride.getStatus().equals(REJECTED) && status.equals(ACCEPTED)){
+        if (ride.getStatus().equals(REJECTED) && status.equals(ACCEPTED)) {
             ride.setStatus(status);
         }
 
@@ -137,7 +142,7 @@ public class RideService {
     }
 
     private PageRequest getPageRequest(Integer page, Integer size, String field) {
-        if  (page < 1 || size < 1) {
+        if (page < 1 || size < 1) {
             throw new BadRequestException(ExceptionMessageUtil.getInvalidRequestMessage(page, size));
         }
 
@@ -152,8 +157,7 @@ public class RideService {
         }
         if (field == null) {
             return PageRequest.of(page - 1, size);
-        }
-        else return PageRequest.of(0, 10);
+        } else return PageRequest.of(0, 10);
     }
 
     private Ride getByIdOrElseThrow(String id) {

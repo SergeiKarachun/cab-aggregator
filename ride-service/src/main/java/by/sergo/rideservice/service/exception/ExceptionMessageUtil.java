@@ -27,6 +27,10 @@ public class ExceptionMessageUtil {
         return "Invalid sorting parameter, can't sort by " + field + " parameter.";
     }
 
+    public static String getInvalidStatusMessage(String status) {
+        return "Invalid status parameter, can't change status to " + status + ".";
+    }
+
     public static String getAlreadyExistMapMessage(HashMap<String, String> errors) {
         StringBuilder message = new StringBuilder();
         errors.values().forEach(str -> message.append(str).append(0xA));
