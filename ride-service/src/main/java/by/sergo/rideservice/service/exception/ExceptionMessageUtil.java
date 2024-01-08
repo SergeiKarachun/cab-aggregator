@@ -2,18 +2,8 @@ package by.sergo.rideservice.service.exception;
 
 import lombok.experimental.UtilityClass;
 
-import java.util.HashMap;
-
 @UtilityClass
 public class ExceptionMessageUtil {
-
-    public static String getAlreadyExistMessage(String className, String variableName, String variableValue) {
-        return className + " with this " + variableName + " " + variableValue + " already exists.";
-    }
-
-    public static String getNotFoundMessage(String className, String variableName, Long id) {
-        return className + " with " + variableName + " " + id + " doesn't exist.";
-    }
 
     public static String getNotFoundMessage(String className, String variableName, String variableValue) {
         return className + " with " + variableName + " " + variableValue + " doesn't exist.";
@@ -28,12 +18,6 @@ public class ExceptionMessageUtil {
     }
 
     public static String getInvalidStatusMessage(String status) {
-        return "Invalid status parameter, can't change status to " + status + ".";
-    }
-
-    public static String getAlreadyExistMapMessage(HashMap<String, String> errors) {
-        StringBuilder message = new StringBuilder();
-        errors.values().forEach(str -> message.append(str).append(0xA));
-        return message.toString();
+        return "Invalid status parameter = " + status + ". Status can be CREATED|ACCEPTED|TRANSPORT|REJECTED|FINISHED.";
     }
 }
