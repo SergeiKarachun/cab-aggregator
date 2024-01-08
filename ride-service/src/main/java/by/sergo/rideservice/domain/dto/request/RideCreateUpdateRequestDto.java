@@ -13,9 +13,6 @@ public class RideCreateUpdateRequestDto {
     @NotBlank(message = "Destination address is required")
     @Size(min = 2, message = "Destination address should have at least 4 characters")
     String destinationAddress;
-    @DecimalMax("10000.0")
-    @DecimalMin("2.7")
-    Double price;
     @NotNull
     @Min(value = 1, message = "Min value is 1")
     Long passengerId;

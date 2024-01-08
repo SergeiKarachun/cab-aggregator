@@ -10,6 +10,7 @@ import by.sergo.rideservice.service.exception.BadRequestException;
 import by.sergo.rideservice.service.exception.ExceptionMessageUtil;
 import by.sergo.rideservice.service.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -20,6 +21,7 @@ import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import static by.sergo.rideservice.domain.enums.Status.*;
 
@@ -35,42 +37,13 @@ public class RideService {
     public RideResponseDto create(RideCreateUpdateRequestDto dto) {
         var ride = modelMapper.map(dto, Ride.class);
         ride.setCreatingTime(LocalDateTime.now());
+        ride.setPrice(getPrice());
         var savedRide = rideRepository.save(ride);
         return modelMapper.map(savedRide, RideResponseDto.class);
     }
 
     public RideResponseDto getById(String id) {
         return modelMapper.map(getByIdOrElseThrow(id), RideResponseDto.class);
-    }
-
-    @Transactional
-    public RideResponseDto changeStatus(String rideId, Status status) {
-        var ride = getByIdOrElseThrow(rideId);
-
-        if (!Arrays.asList(values()).contains(status)) {
-            throw new BadRequestException(
-                    ExceptionMessageUtil.getInvalidStatusMessage(status.toString()));
-        }
-
-        if (ride.getStatus().equals(TRANSPORT) && status.equals(FINISHED)) {
-            ride.setStatus(status);
-            ride.setEndTime(LocalDateTime.now());
-        }
-        if (ride.getStatus().equals(ACCEPTED) && status.equals(TRANSPORT)) {
-            ride.setStatus(status);
-            ride.setStartTime(LocalDateTime.now());
-        }
-
-        if (ride.getStatus().equals(REJECTED) && status.equals(ACCEPTED)) {
-            ride.setStatus(status);
-        }
-
-        if (ride.getStatus().equals(CREATED) && (status.equals(ACCEPTED) || status.equals(REJECTED))) {
-            ride.setStatus(status);
-        }
-
-        var saved = rideRepository.save(ride);
-        return modelMapper.map(saved, RideResponseDto.class);
     }
 
     @Transactional
@@ -83,24 +56,51 @@ public class RideService {
     public RideResponseDto update(RideCreateUpdateRequestDto dto, String id) {
         var ride = getByIdOrElseThrow(id);
         var mappedRide = modelMapper.map(dto, Ride.class);
-        mappedRide.setId(id);
+        mappedRide.setId(new ObjectId(id));
         var savedRide = rideRepository.save(mappedRide);
         return modelMapper.map(savedRide, RideResponseDto.class);
     }
 
     @Transactional
-    public RideResponseDto setDriver(RideResponseDto dto, Long driverId) {
+    public RideResponseDto setDriverAndAcceptRide(RideResponseDto dto, Long driverId) {
         var ride = getByIdOrElseThrow(dto.getId());
-        // Check is driver exist?
         ride.setDriverId(driverId);
         ride.setStatus(ACCEPTED);
         var savedRide = rideRepository.save(modelMapper.map(ride, Ride.class));
         return modelMapper.map(savedRide, RideResponseDto.class);
     }
 
-    public RideListResponseDto getByPassengerId(Long passengerId, Integer page, Integer size, String orderBy) {
+    @Transactional
+    public void rejectRide(String rideId) {
+        var ride = getByIdOrElseThrow(rideId);
+        ride.setStatus(REJECTED);
+        rideRepository.save(ride);
+    }
+
+    @Transactional
+    public void startRide(String rideId) {
+        var ride = getByIdOrElseThrow(rideId);
+        ride.setStatus(TRANSPORT);
+        ride.setStartTime(LocalDateTime.now());
+        rideRepository.save(ride);
+    }
+
+    @Transactional
+    public void endRide(String rideId) {
+        var ride = getByIdOrElseThrow(rideId);
+        ride.setStatus(FINISHED);
+        ride.setEndTime(LocalDateTime.now());
+        rideRepository.save(ride);
+    }
+
+    public RideListResponseDto getByPassengerId(Long passengerId, String status, Integer page, Integer size, String orderBy) {
         PageRequest pageRequest = getPageRequest(page, size, orderBy);
-        var responsePage = rideRepository.findAllByPassengerIdAndStatus(passengerId, FINISHED, pageRequest)
+
+        if (!Arrays.stream(values()).map(Enum::toString).toList().contains(status.toUpperCase())) {
+            throw new BadRequestException(ExceptionMessageUtil.getInvalidStatusMessage(status));
+        }
+
+        var responsePage = rideRepository.findAllByPassengerIdAndStatus(passengerId, Status.valueOf(status), pageRequest)
                 .map(ride -> modelMapper.map(ride, RideResponseDto.class));
         return RideListResponseDto.builder()
                 .rides(responsePage.getContent())
@@ -112,24 +112,14 @@ public class RideService {
                 .build();
     }
 
-    public RideListResponseDto getByDriverId(Long driverId, Integer page, Integer size, String orderBy) {
+    public RideListResponseDto getByDriverId(Long driverId, String status, Integer page, Integer size, String orderBy) {
         PageRequest pageRequest = getPageRequest(page, size, orderBy);
-        var responsePage = rideRepository.findAllByDriverIdAndStatus(driverId, FINISHED, pageRequest)
-                .map(ride -> modelMapper.map(ride, RideResponseDto.class));
-        return RideListResponseDto.builder()
-                .rides(responsePage.getContent())
-                .page(responsePage.getPageable().getPageNumber() + 1)
-                .totalPages(responsePage.getTotalPages())
-                .size(responsePage.getContent().size())
-                .total((int) responsePage.getTotalElements())
-                .sortedByField(orderBy)
-                .build();
-    }
 
+        if (!Arrays.stream(values()).map(Enum::toString).toList().contains(status.toUpperCase())) {
+            throw new BadRequestException(ExceptionMessageUtil.getInvalidStatusMessage(status));
+        }
 
-    public RideListResponseDto getAll(Integer page, Integer size, String orderBy) {
-        PageRequest pageRequest = getPageRequest(page, size, orderBy);
-        var responsePage = rideRepository.findAll(pageRequest)
+        var responsePage = rideRepository.findAllByDriverIdAndStatus(driverId, Status.valueOf(status), pageRequest)
                 .map(ride -> modelMapper.map(ride, RideResponseDto.class));
         return RideListResponseDto.builder()
                 .rides(responsePage.getContent())
@@ -158,6 +148,13 @@ public class RideService {
         if (field == null) {
             return PageRequest.of(page - 1, size);
         } else return PageRequest.of(0, 10);
+    }
+
+    private Double getPrice() {
+        double start = 2.70;
+        double end = 30.00;
+        double random = new Random().nextDouble();
+        return Math.floor((start + (random * (end - start)))*100)/100;
     }
 
     private Ride getByIdOrElseThrow(String id) {

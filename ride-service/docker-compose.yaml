@@ -4,7 +4,7 @@ services:
 
   mongo:
     image: mongo
-    container_name: mongo_db
+    container_name: mongo_db:6
     ports:
       - 27017:27017
     volumes:
