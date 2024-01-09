@@ -57,6 +57,7 @@ public class RideService {
         var ride = getByIdOrElseThrow(id);
         var mappedRide = modelMapper.map(dto, Ride.class);
         mappedRide.setId(new ObjectId(id));
+        mappedRide.setPrice(getPrice());
         var savedRide = rideRepository.save(mappedRide);
         return modelMapper.map(savedRide, RideResponseDto.class);
     }
