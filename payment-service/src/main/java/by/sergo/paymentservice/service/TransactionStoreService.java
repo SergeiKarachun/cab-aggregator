@@ -50,7 +50,7 @@ public class TransactionStoreService {
     }
 
     public ListTransactionStoreResponseDto getPassengerTransactionByPassengerId(Long passengerId, Integer page, Integer size, String orderBy) {
-        var creditCard = creditCardRepository.findByUserIdAndAndUserType(passengerId, PASSENGER)
+        var creditCard = creditCardRepository.findByUserIdAndUserType(passengerId, PASSENGER)
                 .orElseThrow(() -> new NotFoundException(
                         ExceptionMessageUtil.getNotFoundMessage("Credit card", "passengerId", passengerId)));
         var pageRequest = getPageRequestForPassenger(page, size, orderBy);

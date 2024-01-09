@@ -35,7 +35,8 @@ public class CreditCardService {
     public CreditCardResponseDto addCard(CreditCardCreateUpdateDto dto) {
         checkUniqueCreditCard(dto);
         checkExpirationDate(dto);
-        var creditCard = creditCardRepository.save(mapToEntity(dto));
+        var entity = mapToEntity(dto);
+        var creditCard = creditCardRepository.saveAndFlush(entity);
         return mapToDto(creditCard);
     }
 
@@ -56,7 +57,7 @@ public class CreditCardService {
     }
 
     public CreditCardResponseDto getDriverCard(Long driverId) {
-        var creditCard = creditCardRepository.findByUserIdAndAndUserType(driverId, UserType.DRIVER)
+        var creditCard = creditCardRepository.findByUserIdAndUserType(driverId, UserType.DRIVER)
                 .orElseThrow(() -> new NotFoundException(
                         ExceptionMessageUtil.getNotFoundMessage("Credit card with type driver", "userId", driverId)
                 ));
@@ -102,7 +103,7 @@ public class CreditCardService {
     }
 
     private CreditCard getPassengerCreditCard(Long passengerId) {
-        var creditCard = creditCardRepository.findByUserIdAndAndUserType(passengerId, UserType.PASSENGER)
+        var creditCard = creditCardRepository.findByUserIdAndUserType(passengerId, UserType.PASSENGER)
                 .orElseThrow(() -> new NotFoundException(
                         ExceptionMessageUtil.getNotFoundMessage("Credit card with type passenger", "userId", passengerId)
                 ));

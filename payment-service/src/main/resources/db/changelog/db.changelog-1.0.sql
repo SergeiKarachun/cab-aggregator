@@ -20,7 +20,8 @@ CREATE TABLE IF NOT EXISTS credit_card
     exp_date           DATE         NOT NULL,
     user_id            BIGINT       NOT NULL,
     balance            numeric(10, 2),
-    user_type          VARCHAR(255) NOT NULL
+    user_type          VARCHAR(255) NOT NULL,
+    UNIQUE (user_id, user_type)
 );
 -- rollback drop table transaction_store;
 
