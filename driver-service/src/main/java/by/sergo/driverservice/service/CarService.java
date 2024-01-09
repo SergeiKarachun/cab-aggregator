@@ -4,7 +4,6 @@ import by.sergo.driverservice.domain.dto.request.CarCreateUpdateRequestDto;
 import by.sergo.driverservice.domain.dto.response.CarListResponseDto;
 import by.sergo.driverservice.domain.dto.response.CarResponseDto;
 import by.sergo.driverservice.domain.entity.Car;
-import by.sergo.driverservice.domain.entity.Driver;
 import by.sergo.driverservice.repository.CarRepository;
 import by.sergo.driverservice.repository.DriverRepository;
 import by.sergo.driverservice.service.exception.BadRequestException;
@@ -102,7 +101,7 @@ public class CarService {
         }
 
         if (orderBy != null) {
-            List<String> declaredFields = Arrays.stream(Driver.class.getDeclaredFields())
+            List<String> declaredFields = Arrays.stream(Car.class.getDeclaredFields())
                     .map(Field::getName)
                     .toList();
             if (!declaredFields.contains(orderBy.toLowerCase())){
@@ -128,7 +127,7 @@ public class CarService {
         }
 
         checkDriverIsExist(dto.getDriverId());
-        checkDriverHasCar(dto.getDriverId());
+        //  checkDriverHasCar(dto.getDriverId());
         checkDate(dto.getYearOfManufacture());
     }
 

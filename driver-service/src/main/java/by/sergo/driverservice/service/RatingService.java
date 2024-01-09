@@ -31,7 +31,7 @@ public class RatingService {
         var rating = mapToEntity(dto);
         rating.setDriver(driver);
         var savedRating = ratingRepository.saveAndFlush(rating);
-        driver.setRating(getAverageRating(driverId));
+        driver.setRating(Math.floor(getAverageRating(driverId) * 100) / 100);
         driverRepository.save(driver);
         return mapToDto(savedRating);
     }
