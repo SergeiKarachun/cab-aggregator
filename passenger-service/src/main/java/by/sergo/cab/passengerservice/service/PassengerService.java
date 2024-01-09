@@ -57,6 +57,7 @@ public class PassengerService {
 
     public PassengerResponseDto getById(Long id) {
         var passenger = getByIdOrElseThrow(id);
+        passenger.setRating(Math.floor(passenger.getRating() * 100) / 100);
         return mapToDto(passenger);
     }
 

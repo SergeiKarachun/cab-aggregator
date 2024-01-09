@@ -21,7 +21,7 @@ public class Rating {
     private Integer grade;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "passenger_id", nullable = false)
+    @JoinColumn(name = "passenger_id")
     private Passenger passenger;
 
     private Long driverId;

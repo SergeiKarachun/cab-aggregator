@@ -16,10 +16,10 @@ CREATE TABLE IF NOT EXISTS passenger
 --Rating
 CREATE TABLE IF NOT EXISTS rating
 (
-    id BIGSERIAL PRIMARY KEY,
-    grade INT NOT NULL,
-    passenger_id BIGINT NOT NULL,
-    driver_id BIGINT NOT NULL,
+    id           BIGSERIAL PRIMARY KEY,
+    grade        INT    NOT NULL,
+    passenger_id BIGINT,
+    driver_id    BIGINT NOT NULL,
     CONSTRAINT rating_passenger_fk
         FOREIGN KEY
             (
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS rating
              id
                 )
             ON UPDATE CASCADE
-            ON DELETE SET NULL
+            ON DELETE CASCADE
 );
 -- rollback drop table rating;
 
