@@ -5,6 +5,7 @@ import by.sergo.paymentservice.domain.dto.request.PaymentRequestDto;
 import by.sergo.paymentservice.domain.dto.response.CreditCardResponseDto;
 import by.sergo.paymentservice.domain.dto.response.StringResponse;
 import by.sergo.paymentservice.service.CreditCardService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,13 +17,13 @@ public class CreditCardController {
     private final CreditCardService creditCardService;
 
     @PostMapping
-    public ResponseEntity<CreditCardResponseDto> addCard(@RequestBody CreditCardCreateUpdateDto dto) {
+    public ResponseEntity<CreditCardResponseDto> addCard(@RequestBody @Valid CreditCardCreateUpdateDto dto) {
         return ResponseEntity.ok(creditCardService.addCard(dto));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CreditCardResponseDto> changeCard(@PathVariable("id") Long id,
-                                                            @RequestBody CreditCardCreateUpdateDto dto) {
+                                                            @RequestBody @Valid CreditCardCreateUpdateDto dto) {
         return ResponseEntity.ok(creditCardService.changeCard(dto, id));
     }
 
@@ -45,7 +46,7 @@ public class CreditCardController {
     }
 
     @PostMapping("/payment")
-    public ResponseEntity<CreditCardResponseDto> makePayment(@RequestBody PaymentRequestDto dto) {
+    public ResponseEntity<CreditCardResponseDto> makePayment(@RequestBody @Valid PaymentRequestDto dto) {
         return ResponseEntity.ok(creditCardService.makePayment(dto));
     }
 }

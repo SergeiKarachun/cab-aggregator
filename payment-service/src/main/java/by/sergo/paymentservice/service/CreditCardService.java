@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import static by.sergo.paymentservice.domain.enums.Operation.WITHDRAWAL;
+import static by.sergo.paymentservice.domain.enums.Operation.PAYMENT;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +36,9 @@ public class CreditCardService {
         checkUniqueCreditCard(dto);
         checkExpirationDate(dto);
         var entity = mapToEntity(dto);
-        var creditCard = creditCardRepository.saveAndFlush(entity);
+        entity.setId(null);
+        var creditCard = creditCardRepository.save(entity);
+        creditCardRepository.flush();
         return mapToDto(creditCard);
     }
 
@@ -89,7 +91,7 @@ public class CreditCardService {
                 .creditCardNumber(savedCreditCard.getCreditCardNumber())
                 .value(payment.getSum())
                 .operationDate(LocalDateTime.now())
-                .operation(WITHDRAWAL)
+                .operation(PAYMENT)
                 .build();
         transactionStoreRepository.save(transaction);
         return mapToDto(savedCreditCard);

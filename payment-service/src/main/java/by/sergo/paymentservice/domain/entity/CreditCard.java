@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 @Table(name = "credit_card")
-@EqualsAndHashCode(exclude = {"userId", "creditCardNumber"})
+@EqualsAndHashCode(exclude = {"userId", "userType"})
 public class CreditCard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

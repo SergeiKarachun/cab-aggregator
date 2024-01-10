@@ -23,14 +23,13 @@ CREATE TABLE IF NOT EXISTS credit_card
     user_type          VARCHAR(255) NOT NULL,
     UNIQUE (user_id, user_type)
 );
--- rollback drop table transaction_store;
+-- rollback drop table credit_card;
 
 CREATE TABLE IF NOT EXISTS transaction_store
 (
     id                 BIGSERIAL PRIMARY KEY,
-    credit_card_number VARCHAR(255) NOT NULL UNIQUE,
-    account_number     VARCHAR(255) NOT NULL UNIQUE,
-    cvv                VARCHAR(32)  NOT NULL,
+    credit_card_number VARCHAR(255) NOT NULL,
+    account_number     VARCHAR(255) NOT NULL,
     operation_date     TIMESTAMP    NOT NULL,
     operation          VARCHAR(255) NOT NULL,
     value              numeric(10, 2)

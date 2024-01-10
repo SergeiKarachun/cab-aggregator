@@ -4,6 +4,7 @@ import by.sergo.paymentservice.domain.dto.request.AccountCreateUpdateRequestDto;
 import by.sergo.paymentservice.domain.dto.response.AccountResponseDto;
 import by.sergo.paymentservice.domain.dto.response.StringResponse;
 import by.sergo.paymentservice.service.AccountService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ public class AccountController {
     private final AccountService accountService;
 
     @PostMapping
-    public ResponseEntity<AccountResponseDto> create(@RequestBody AccountCreateUpdateRequestDto dto) {
+    public ResponseEntity<AccountResponseDto> create(@RequestBody @Valid AccountCreateUpdateRequestDto dto) {
         return ResponseEntity.ok(accountService.createAccount(dto));
     }
 

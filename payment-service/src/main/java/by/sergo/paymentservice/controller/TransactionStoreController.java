@@ -15,17 +15,15 @@ public class TransactionStoreController {
     @GetMapping("/driver/{id}")
     public ResponseEntity<ListTransactionStoreResponseDto> getDriverTransaction(@PathVariable("id") Long driverId,
                                                                                 @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-                                                                                @RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
-                                                                                @RequestParam(value = "orderBy", required = false) String orderBy) {
-        return ResponseEntity.ok(transactionStoreService.getDriverTransactionByDriverId(driverId, page, size, orderBy));
+                                                                                @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
+        return ResponseEntity.ok(transactionStoreService.getDriverTransactionByDriverId(driverId, page, size));
     }
 
     @GetMapping("/passenger/{id}")
     public ResponseEntity<ListTransactionStoreResponseDto> getPassengerTransaction(@PathVariable("id") Long passengerId,
                                                                                    @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-                                                                                   @RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
-                                                                                   @RequestParam(value = "orderBy", required = false) String orderBy) {
-        return ResponseEntity.ok(transactionStoreService.getPassengerTransactionByPassengerId(passengerId, page, size, orderBy));
+                                                                                   @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
+        return ResponseEntity.ok(transactionStoreService.getPassengerTransactionByPassengerId(passengerId, page, size));
     }
 
 }
